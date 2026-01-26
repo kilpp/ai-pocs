@@ -33,8 +33,15 @@ def train_model(train_dir, val_dir=None, model_type='transfer', transfer_model='
     )
     
     num_classes = len(get_class_names(train_dir))
+    class_names = get_class_names(train_dir)
     print(f"Number of classes: {num_classes}")
-    print(f"Class names: {get_class_names(train_dir)}")
+    print(f"Class names: {class_names}")
+
+    if num_classes == 0:
+        raise ValueError(
+            "No classes found in training directory. "
+            f"Ensure {train_dir} contains subfolders (class names) with images, e.g. data/train/classA, data/train/classB."
+        )
     
     if model_type.lower() == 'simple':
         print("Creating simple CNN model...")

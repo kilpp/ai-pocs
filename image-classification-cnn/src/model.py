@@ -71,6 +71,12 @@ def create_transfer_learning_model(model_name='resnet50', num_classes=10,
     Returns:
         Compiled Keras model
     """
+    # Validate num_classes to avoid invalid Dense units
+    if not isinstance(num_classes, int) or num_classes <= 0:
+        raise ValueError(
+            f"num_classes must be a positive integer, got {num_classes}. "
+            "Ensure your dataset directory contains at least one class subfolder with images."
+        )
     
     model_map = {
         'resnet50': ResNet50,
