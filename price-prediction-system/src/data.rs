@@ -64,7 +64,7 @@ impl DataLoader {
             let air_conditioning = if rng.gen_bool(0.8) { 1.0 } else { 0.0 };
             let parking = rng.gen_range(0.0..4.0);
             let prefarea = if rng.gen_bool(0.5) { 1.0 } else { 0.0 };
-            let furnishing_status = rng.gen_range(0.0..3.0).floor();
+            let furnishing_status: f64 = rng.gen_range(0.0_f64..3.0_f64).floor();
 
             // Generate price based on features with some noise
             let base_price = area_sqft * 100.0
@@ -81,7 +81,7 @@ impl DataLoader {
                 + furnishing_status * 75000.0;
 
             let noise = rng.gen_range(-50000.0..50000.0);
-            let price = (base_price + noise).max(50000.0);
+            let price: f64 = (base_price + noise).max(50000.0_f64);
 
             properties.push(Property {
                 area_sqft,
