@@ -71,41 +71,54 @@ impl IsolationTree {
         }
 
         let n_features = data[0].len();
-        let feature = rng.gen_range(0..n_features);
 
-        // Find min/max for the chosen feature
-        let mut min_val = f64::MAX;
-        let mut max_val = f64::MIN;
-        for sample in data {
-            if sample[feature] < min_val {
-                min_val = sample[feature];
+        // Try features randomly until we find one that can split.
+        // This avoids wasting tree depth on constant features.
+        let mut candidates: Vec<usize> = (0..n_features).collect();
+        loop {
+            if candidates.is_empty() {
+                return IsolationNode::Leaf { size: data.len() };
             }
-            if sample[feature] > max_val {
-                max_val = sample[feature];
+
+            let idx = rng.gen_range(0..candidates.len());
+            let feature = candidates[idx];
+
+            // Find min/max for the chosen feature
+            let mut min_val = f64::MAX;
+            let mut max_val = f64::MIN;
+            for sample in data {
+                if sample[feature] < min_val {
+                    min_val = sample[feature];
+                }
+                if sample[feature] > max_val {
+                    max_val = sample[feature];
+                }
             }
-        }
 
-        // If all values are the same, can't split
-        if (max_val - min_val).abs() < f64::EPSILON {
-            return IsolationNode::Leaf { size: data.len() };
-        }
+            // If all values are the same, remove this feature and try another
+            if (max_val - min_val).abs() < f64::EPSILON {
+                candidates.swap_remove(idx);
+                continue;
+            }
 
-        // Random split point between min and max
-        let threshold = rng.gen_range(min_val..max_val);
+            // Random split point between min and max
+            let threshold = rng.gen_range(min_val..max_val);
 
-        let (left_data, right_data): (Vec<_>, Vec<_>) =
-            data.iter().cloned().partition(|sample| sample[feature] < threshold);
+            let (left_data, right_data): (Vec<_>, Vec<_>) =
+                data.iter().cloned().partition(|sample| sample[feature] < threshold);
 
-        // Avoid empty partitions
-        if left_data.is_empty() || right_data.is_empty() {
-            return IsolationNode::Leaf { size: data.len() };
-        }
+            // Avoid empty partitions
+            if left_data.is_empty() || right_data.is_empty() {
+                candidates.swap_remove(idx);
+                continue;
+            }
 
-        IsolationNode::Branch {
-            feature,
-            threshold,
-            left: Box::new(Self::build_node(&left_data, depth + 1, max_depth, rng)),
-            right: Box::new(Self::build_node(&right_data, depth + 1, max_depth, rng)),
+            break IsolationNode::Branch {
+                feature,
+                threshold,
+                left: Box::new(Self::build_node(&left_data, depth + 1, max_depth, rng)),
+                right: Box::new(Self::build_node(&right_data, depth + 1, max_depth, rng)),
+            };
         }
     }
 

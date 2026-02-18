@@ -66,7 +66,6 @@ impl Detector {
         // Isolation Forest handles varying feature scales inherently
         // through its random split mechanism.
         let score = self.forest.as_ref().unwrap().score(&features);
-        eprintln!("[DEBUG] event #{} score={:.4} features={:?}", self.total_events, score, &features);
 
         self.events_since_train += 1;
 
