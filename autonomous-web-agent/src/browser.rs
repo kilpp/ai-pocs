@@ -19,6 +19,7 @@ pub struct PageContent {
 #[derive(Debug)]
 pub struct ParsedPage {
     pub url: Url,
+    pub params: String,
     pub title: Option<String>,
     pub links: Vec<Url>,
     pub text_content: String,
