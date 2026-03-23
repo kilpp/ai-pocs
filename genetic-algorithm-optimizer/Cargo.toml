@@ -1,0 +1,13 @@
+[package]
+name = "genetic-algorithm-optimizer"
+version = "0.1.0"
+edition = "2021"
+description = "A genetic algorithm engine for solving optimization problems using evolutionary strategies"
+
+[dependencies]
+rand = "0.8"
+rand_chacha = "0.3"
+rayon = "1.10"
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
