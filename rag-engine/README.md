@@ -2,19 +2,6 @@
 
 A local Retrieval-Augmented Generation (RAG) pipeline CLI tool written in Rust. Ingest text/markdown documents into a vector index, then ask questions that are answered using retrieved context sent to the Claude API.
 
-## Architecture
-
-```
-Documents → Chunking → Embedding (ONNX) → HNSW Index → Query
-                                                          ↓
-                                            Claude API ← Context
-```
-
-- **Embeddings**: `all-MiniLM-L6-v2` via ONNX Runtime (384-dim vectors)
-- **Vector Search**: HNSW approximate nearest neighbor (instant-distance)
-- **LLM**: Claude API (Anthropic Messages API)
-- **Persistence**: bincode serialization to disk
-
 ## Setup
 
 ### 1. Install the embedding model
